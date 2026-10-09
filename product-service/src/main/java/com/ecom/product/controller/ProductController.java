@@ -5,6 +5,10 @@ import com.ecom.product.dto.ProductResponse;
 import com.ecom.product.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +29,14 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getAllProducts(
-            @RequestParam(required = false) String category
-    ) {
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(
+            @RequestParam(required = false) String category,
+            @PageableDefault(page = 0, size = 10, sort = "createdAT", direction = Sort.Direction.DESC)Pageable pageable
+            ) {
         if (category != null && !category.isBlank()) {
-            return ResponseEntity.ok(productService.getProductsByCategory(category));
+            return ResponseEntity.ok(productService.getProductsByCategory(category,pageable));
         }
-        return ResponseEntity.ok(productService.getAllProducts());
+        return ResponseEntity.ok(productService.getAllProducts(pageable));
     }
 
     @GetMapping("/{id}")

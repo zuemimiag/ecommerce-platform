@@ -7,6 +7,8 @@ import com.ecom.product.model.Product;
 import com.ecom.product.repository.ProductRepository;
 import com.ecom.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,12 +37,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+    public Page<ProductResponse> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(this::mapToResponse);
     }
+
+
 
     @Override
     @Transactional(readOnly = true)
@@ -51,12 +53,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<ProductResponse> getProductsByCategory(String category) {
-        return productRepository.findByCategoryIgnoreCase(category)
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+    public Page<ProductResponse> getProductsByCategory(String category, Pageable pageable) {
+        return productRepository.findByCategoryIgnoreCase(category,pageable)
+                .map(this::mapToResponse);
     }
 
     @Override
